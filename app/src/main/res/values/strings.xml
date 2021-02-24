@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">MyAppAndroid</string>
+    <string name="firstlabel">Please post your news here</string>
+    <string name="TextfieldhintName">Name</string>
+    <string name="Buttonsend">Send</string>
+    <string name="messagetext">No Message</string>
+</resources>
