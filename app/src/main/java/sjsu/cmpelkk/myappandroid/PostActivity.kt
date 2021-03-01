@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.MotionEvent
 import android.view.View
 import android.widget.EditText
 import android.widget.ImageView
@@ -14,6 +15,7 @@ const val IMAGE_REQUEST_CODE = 33
 
 class PostActivity : AppCompatActivity() {
     lateinit var myImage: ImageView
+    lateinit var textmultiline: EditText
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_post)
@@ -21,6 +23,15 @@ class PostActivity : AppCompatActivity() {
         //val myImage: ImageView = findViewById(R.id.uploadimageView)
         myImage = findViewById(R.id.uploadimageView)
         myImage.setOnClickListener{changeImage()}
+
+        textmultiline = findViewById(R.id.editTextMultiLine)
+        textmultiline.setOnTouchListener { view, event ->
+            view.parent.requestDisallowInterceptTouchEvent(true)
+            if ((event.action and MotionEvent.ACTION_MASK) == MotionEvent.ACTION_UP) {
+                view.parent.requestDisallowInterceptTouchEvent(false)
+            }
+            return@setOnTouchListener false
+        }
 
     }
 

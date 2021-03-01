@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:overScrollMode="always"
     android:paddingStart="@dimen/bigpad"
     android:paddingEnd="@dimen/bigpad"
     tools:context=".PostActivity">
@@ -43,12 +44,11 @@
         app:layout_constraintEnd_toEndOf="parent" />
 
     <ScrollView
-        android:layout_width="410dp"
-        android:layout_height="592dp"
+        android:layout_width="398dp"
+        android:layout_height="0dp"
         android:layout_marginStart="10dp"
         android:layout_marginTop="20dp"
         android:layout_marginEnd="10dp"
-        android:layout_marginBottom="10dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -84,13 +84,14 @@
                 android:text="@string/storytext" />
 
             <EditText
-                android:id="@+id/editTextTextMultiLine"
+                android:id="@+id/editTextMultiLine"
                 android:layout_width="match_parent"
                 android:layout_height="175dp"
                 android:layout_margin="@dimen/bigpad"
                 android:ems="10"
                 android:gravity="start|top"
                 android:inputType="textMultiLine"
+                android:overScrollMode="always"
                 android:scrollbars="vertical" />
 
             <TextView
