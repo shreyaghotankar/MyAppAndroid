@@ -4,4 +4,8 @@
     <string name="TextfieldhintName">Name</string>
     <string name="Buttonsend">Send</string>
     <string name="messagetext">No Message</string>
+    <string name="titletext">Enter your title</string>
+    <string name="storytext">Enter your story</string>
+    <string name="enterimagetext">Upload your image</string>
+    <string name="submitbutton">Submit</string>
 </resources>
