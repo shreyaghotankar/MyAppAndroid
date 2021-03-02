@@ -25,7 +25,7 @@ class PostActivity : AppCompatActivity() {
         myImage.setOnClickListener{changeImage()}
 
         textmultiline = findViewById(R.id.editTextMultiLine)
-        
+
         //When the multiline textview is inside the scrollview, the textview cannot scroll, using the following code to enable the scroll of the textview
         textmultiline.setOnTouchListener { view, event ->
             view.parent.requestDisallowInterceptTouchEvent(true)
