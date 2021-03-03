@@ -2,4 +2,7 @@
 <resources>
     <dimen name="Titlesize">24sp</dimen>
     <dimen name="bigpad">8dp</dimen>
+    <dimen name="app_bar_height">250dp</dimen>
+    <dimen name="fab_margin">16dp</dimen>
+    <dimen name="text_margin">16dp</dimen>
 </resources>

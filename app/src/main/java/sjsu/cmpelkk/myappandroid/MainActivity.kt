@@ -46,7 +46,7 @@ class MainCardViewHolder(val cardView: CardView) : RecyclerView.ViewHolder(cardV
             Snackbar.make(it, "Click detected on item $position",
                     Snackbar.LENGTH_LONG).setAction("Action", null).show()
 
-            val intent = Intent(context, PostActivity::class.java).apply {
+            val intent = Intent(context, DetailScrollingActivity::class.java).apply {
                 //putExtra("DataItem", oneitem.title)
                 putExtra("DataItem", oneitem as Serializable)
                 //get the object with: val object = intent.extras.get("DataItem") as DataItem

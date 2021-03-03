@@ -11,10 +11,12 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.MyAppAndroid">
-        <activity android:name=".DisplayMessageActivity"></activity>
-        <activity android:name=".PostActivity">
-
-        </activity>
+        <activity
+            android:name=".DetailScrollingActivity"
+            android:label="@string/title_activity_detail_scrolling"
+            android:theme="@style/Theme.MyAppAndroid.NoActionBar"></activity>
+        <activity android:name=".DisplayMessageActivity" />
+        <activity android:name=".PostActivity"></activity>
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
