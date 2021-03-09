@@ -2,13 +2,20 @@ package sjsu.cmpelkk.myappandroid
 
 import android.app.Activity
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.Drawable
+import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.MotionEvent
 import android.view.View
-import android.widget.EditText
-import android.widget.ImageView
-import android.widget.Toast
+import android.widget.*
+import androidx.appcompat.app.AppCompatActivity
+import sjsu.cmpelkk.myappandroid.myutil.imageUtil
+import java.io.Serializable
+
 
 const val EXTRA_MESSAGE = "sjsu.cmpelkk.MyAppAndroid.MESSAGE"
 const val IMAGE_REQUEST_CODE = 33
@@ -16,6 +23,9 @@ const val IMAGE_REQUEST_CODE = 33
 class PostActivity : AppCompatActivity() {
     lateinit var myImage: ImageView
     lateinit var textmultiline: EditText
+    lateinit var submitbutton: Button
+    lateinit var titletextView: TextView
+    lateinit var nametext: TextView
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_post)
@@ -24,7 +34,16 @@ class PostActivity : AppCompatActivity() {
         myImage = findViewById(R.id.uploadimageView)
         myImage.setOnClickListener{changeImage()}
 
+        titletextView = findViewById(R.id.entertitletextview)
+
+        submitbutton = findViewById(R.id.submitbutton)
+        submitbutton.setOnClickListener {
+            senddataBack()
+        }
+
         textmultiline = findViewById(R.id.editTextMultiLine)
+
+        nametext = findViewById<EditText>(R.id.nameTextfield)
 
         //When the multiline textview is inside the scrollview, the textview cannot scroll, using the following code to enable the scroll of the textview
         textmultiline.setOnTouchListener { view, event ->
@@ -37,20 +56,35 @@ class PostActivity : AppCompatActivity() {
 
     }
 
+    private fun senddataBack() {
+        //create an instance of an Intent object.
+        val data = Intent()
+        //set the value/data to pass back
+        data.setData(Uri.parse(titletextView.text.toString()))
+
+        val mynewdata = DataItem(nametext.text.toString(), titletextView.text.toString(),textmultiline.text.toString(),false,0, R.drawable.imageupload)
+        data.putExtra("NewDataItem", mynewdata as Serializable)
+        //set a result code, It is either RESULT_OK or RESULT_CANCELLED
+        setResult(RESULT_OK, data)
+        //Close the activity
+        finish()
+    }
+
     private fun changeImage() {
         //val myImage: ImageView = findViewById(R.id.uploadimageView)
-        //myImage.setImageResource(R.drawable.ic_baseline_star_rate_24)
+        //myImage.setImageResource(R.drawable.ic_baseline_star_rate_24)//add a drawable
 
         val intent = Intent(Intent.ACTION_PICK)
         intent.type = "image/*"
-        startActivityForResult(intent,IMAGE_REQUEST_CODE)
+        startActivityForResult(intent, IMAGE_REQUEST_CODE)
     }
 
     fun sendMessage(view: View) {
-        Toast.makeText(this,"Button clicked", Toast.LENGTH_LONG).show()
+        Toast.makeText(this, "Button clicked", Toast.LENGTH_LONG).show()
 
-        val editText = findViewById<EditText>(R.id.nameTextfield)
-        val message = editText.text.toString()
+//        val editText = findViewById<EditText>(R.id.nameTextfield)
+//        val message = editText.text.toString()
+        val message = nametext.text.toString()
         val intent = Intent(this, DisplayMessageActivity::class.java).apply {
             putExtra(EXTRA_MESSAGE, message)
         }
@@ -61,11 +95,27 @@ class PostActivity : AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == Activity.RESULT_OK && requestCode != IMAGE_REQUEST_CODE)
         {
-            Toast.makeText(this,"Activity result received", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, "Activity result received", Toast.LENGTH_LONG).show()
         }
 
         if (resultCode == Activity.RESULT_OK && requestCode == IMAGE_REQUEST_CODE) {
+            //Option1, use image uri
             myImage.setImageURI(data?.data)
+
+            //Other options
+            //val uri = Uri.parse("android.resource://" + packageName + "/" + R.drawable.sjsu1)
+            //myImage.setImageURI(uri)
+            val uri = data?.data
+            //val inputStream = contentResolver.openInputStream(uri)
+            val inputStream = uri?.let { contentResolver.openInputStream(it) }
+            val b = BitmapFactory.decodeStream(inputStream)//Creates Bitmap objects
+            Log.i("PostActivity", "width: "+b.width+", height:"+b.height)//width: 960, height:1280
+            val yourDrawable: Drawable = BitmapDrawable(resources, imageUtil.Bitmapscale(b,0.5))
+            myImage.setImageDrawable(yourDrawable)
+
+//            val yourDrawable  = ResourcesCompat.getDrawable(resources, R.drawable.sjsu1, null)
+//            myImage.setImageDrawable(yourDrawable)
+
         }
     }
 }

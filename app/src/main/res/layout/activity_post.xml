@@ -68,7 +68,7 @@
                 android:text="@string/titletext" />
 
             <EditText
-                android:id="@+id/editTextTextPersonName"
+                android:id="@+id/entertitletextview"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/bigpad"

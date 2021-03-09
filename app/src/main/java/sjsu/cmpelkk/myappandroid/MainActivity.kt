@@ -1,5 +1,6 @@
 package sjsu.cmpelkk.myappandroid
 
+import android.app.Activity
 import android.app.ActivityOptions
 import android.content.Context
 import android.content.Intent
@@ -9,24 +10,52 @@ import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
 import java.io.Serializable
 
-
+const val POST_REQUEST_CODE = 32
 class MainActivity : AppCompatActivity() {
+    var datalist: MutableList<DataItem> = mutableListOf()
+    lateinit var recyclerCard: RecyclerView
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val recyclerCard: RecyclerView = findViewById(R.id.cardrecyclerview)
-        recyclerCard.adapter = MainCardAdapter(carddefaultdata)
+        recyclerCard = findViewById(R.id.cardrecyclerview)
+        datalist = carddefaultdata.toMutableList()
+        recyclerCard.adapter = MainCardAdapter(datalist) //(carddefaultdata)
 
+        val fab: View = findViewById(R.id.floatingActionButton)
+        fab.setOnClickListener { view ->
+            val intent = Intent(this, PostActivity::class.java)
+            //startActivity(intent)
+            startActivityForResult(intent, POST_REQUEST_CODE)
+        }
+
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode == Activity.RESULT_OK && requestCode == POST_REQUEST_CODE) {
+            Toast.makeText(this, data?.dataString, Toast.LENGTH_LONG).show()//title data
+            val dataitem: DataItem? = data?.extras?.get("NewDataItem") as? DataItem
+            if (dataitem != null) {
+                datalist.add(datalist.lastIndex+1, dataitem)
+                val myadapter = recyclerCard.adapter
+                if (myadapter != null) {
+                    myadapter.notifyDataSetChanged()
+                }
+
+            }
+        }
     }
 }
 
@@ -38,8 +67,7 @@ class MainCardViewHolder(val cardView: CardView) : RecyclerView.ViewHolder(cardV
     fun bind(oneitem: DataItem) {
         title.text = oneitem.title
         story.text = oneitem.story
-        image.setImageResource(oneitem.imagename)//R.drawable.imageupload)
-
+        image.setImageResource(oneitem.imagename)//Use a resource id to set the content of the ImageView., R.drawable.imageupload)
         val context = cardView.context
         cardView.setOnClickListener {
             var position: Int = adapterPosition
@@ -66,7 +94,7 @@ class MainCardViewHolder(val cardView: CardView) : RecyclerView.ViewHolder(cardV
 
 }
 
-class MainCardAdapter(val data: List<DataItem>) : RecyclerView.Adapter<MainCardViewHolder>()
+class MainCardAdapter(var data: List<DataItem>) : RecyclerView.Adapter<MainCardViewHolder>()
 {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MainCardViewHolder {
         //TODO("Not yet implemented")

@@ -19,7 +19,7 @@ class DetailScrollingActivity : AppCompatActivity() {
         val toolbarlayout: CollapsingToolbarLayout = findViewById<CollapsingToolbarLayout>(R.id.toolbar_layout)
         if (dataitem != null) {
             toolbarlayout.title = dataitem.title
-            toolbarlayout.setBackgroundResource(dataitem.imagename)
+            toolbarlayout.setBackgroundResource(dataitem.imagename)//Drawable object or 0 to remove the background.
             findViewById<TextView>(R.id.nestedscrolltextview).text = dataitem.story
         }//toolbar.title = title
 
@@ -28,6 +28,11 @@ class DetailScrollingActivity : AppCompatActivity() {
             Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                     .setAction("Action", null).show()
         }
+
+        //To enable the Up button for an activity that has a parent activity,
+        // call the app bar's setDisplayHomeAsUpEnabled() method.
+        setSupportActionBar(findViewById(R.id.toolbar)) //toolbar in activity_detail_scrolling.xml
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
 
     }

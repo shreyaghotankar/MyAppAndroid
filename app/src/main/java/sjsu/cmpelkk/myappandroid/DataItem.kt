@@ -11,6 +11,9 @@ data class DataItem(
     val imagename: Int, //String?
 ): Serializable
 
+//val yourDrawable  = ResourcesCompat.getDrawable(resources, R.drawable.sjsu1, null)
+//Uri.parse("android.resource://" + packageName + "/" + R.drawable.sjsu1)
+
 public val carddefaultdata = listOf<DataItem>(
     DataItem("name1", "testtitle1", "Test story, Test storyTest storyTest storyTest storyTest storyTest storyTest storyTest storyTest storyTest storyTest storyTest story", false, 4, R.drawable.imageupload),
     DataItem("name2", "testtitle2", "Test story", true, 4, R.drawable.sjsu1),
