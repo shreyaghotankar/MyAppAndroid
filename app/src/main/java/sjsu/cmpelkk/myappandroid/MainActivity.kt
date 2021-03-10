@@ -18,8 +18,10 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
+import sjsu.cmpelkk.myappandroid.myutil.SwipeToDeleteCallback
 import java.io.Serializable
 
 const val POST_REQUEST_CODE = 32
@@ -33,6 +35,16 @@ class MainActivity : AppCompatActivity() {
         recyclerCard = findViewById(R.id.cardrecyclerview)
         datalist = carddefaultdata.toMutableList()
         recyclerCard.adapter = MainCardAdapter(datalist) //(carddefaultdata)
+
+        val swipeHandler = object: SwipeToDeleteCallback(this){
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                val adapter = recyclerCard.adapter as MainCardAdapter
+                adapter.removeAt(viewHolder.adapterPosition)
+
+            }
+        }
+        val itemTouchHelper = ItemTouchHelper(swipeHandler)
+        itemTouchHelper.attachToRecyclerView(recyclerCard)
 
         val fab: View = findViewById(R.id.floatingActionButton)
         fab.setOnClickListener { view ->
@@ -52,7 +64,8 @@ class MainActivity : AppCompatActivity() {
                 datalist.add(datalist.lastIndex+1, dataitem)
                 val myadapter = recyclerCard.adapter
                 if (myadapter != null) {
-                    myadapter.notifyDataSetChanged()
+                    //myadapter.notifyDataSetChanged()
+                    myadapter.notifyItemInserted(datalist.lastIndex+1)
                 }
 
             }
@@ -97,7 +110,7 @@ class MainCardViewHolder(val cardView: CardView) : RecyclerView.ViewHolder(cardV
 
 }
 
-class MainCardAdapter(var data: List<DataItem>) : RecyclerView.Adapter<MainCardViewHolder>()
+class MainCardAdapter(var data: MutableList<DataItem>) : RecyclerView.Adapter<MainCardViewHolder>()
 {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MainCardViewHolder {
         //TODO("Not yet implemented")
@@ -125,6 +138,11 @@ class MainCardAdapter(var data: List<DataItem>) : RecyclerView.Adapter<MainCardV
     override fun onBindViewHolder(holder: MainCardViewHolder, position: Int) {
         //TODO("Not yet implemented")
         holder.bind(data[position])
+    }
+
+    fun removeAt(position: Int) {
+        data.removeAt(position)
+        notifyItemRemoved(position)
     }
 
 }
