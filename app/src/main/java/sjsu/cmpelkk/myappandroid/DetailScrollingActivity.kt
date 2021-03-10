@@ -1,5 +1,8 @@
 package sjsu.cmpelkk.myappandroid
 
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
 import android.widget.TextView
 import com.google.android.material.appbar.CollapsingToolbarLayout
@@ -7,6 +10,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.NestedScrollView
+import sjsu.cmpelkk.myappandroid.myutil.imageUtil
 
 class DetailScrollingActivity : AppCompatActivity() {
 
@@ -19,7 +23,14 @@ class DetailScrollingActivity : AppCompatActivity() {
         val toolbarlayout: CollapsingToolbarLayout = findViewById<CollapsingToolbarLayout>(R.id.toolbar_layout)
         if (dataitem != null) {
             toolbarlayout.title = dataitem.title
-            toolbarlayout.setBackgroundResource(dataitem.imagename)//Drawable object or 0 to remove the background.
+            //Uri.parse(dataitem.imagename)
+            toolbarlayout.setBackgroundResource(R.drawable.sjsu1)
+            //toolbarlayout.setBackgroundResource(dataitem.imagename)//Drawable object or 0 to remove the background.
+//            val inputStream = contentResolver.openInputStream(dataitem.imagename)
+//            val b = BitmapFactory.decodeStream(inputStream)//Creates Bitmap objects
+//            val bMapScaled = imageUtil.BitmapscaleToFitHeight(b, R.dimen.app_bar_height)
+//            toolbarlayout.setBackgroundResource(BitmapDrawable(resources, bMapScaled))
+
             findViewById<TextView>(R.id.nestedscrolltextview).text = dataitem.story
         }//toolbar.title = title
 

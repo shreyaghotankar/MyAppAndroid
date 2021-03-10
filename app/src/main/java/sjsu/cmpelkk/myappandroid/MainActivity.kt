@@ -8,6 +8,7 @@ import android.content.res.AssetManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Color
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -67,7 +68,9 @@ class MainCardViewHolder(val cardView: CardView) : RecyclerView.ViewHolder(cardV
     fun bind(oneitem: DataItem) {
         title.text = oneitem.title
         story.text = oneitem.story
-        image.setImageResource(oneitem.imagename)//Use a resource id to set the content of the ImageView., R.drawable.imageupload)
+        //image.setImageResource(oneitem.imagename)//Use a resource id to set the content of the ImageView., R.drawable.imageupload)
+        //image.setImageURI(oneitem.imagename)
+        image.setImageURI(Uri.parse(oneitem.imagename))
         val context = cardView.context
         cardView.setOnClickListener {
             var position: Int = adapterPosition

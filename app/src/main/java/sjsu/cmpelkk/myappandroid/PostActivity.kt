@@ -2,10 +2,7 @@ package sjsu.cmpelkk.myappandroid
 
 import android.app.Activity
 import android.content.Intent
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.graphics.drawable.BitmapDrawable
-import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -26,9 +23,14 @@ class PostActivity : AppCompatActivity() {
     lateinit var submitbutton: Button
     lateinit var titletextView: TextView
     lateinit var nametext: TextView
+    lateinit var imageuri: String //Uri
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_post)
+
+        //set a default image
+        imageuri = Uri.parse("android.resource://" + packageName + "/" + R.drawable.sjsu1).toString()
 
         //val myImage: ImageView = findViewById(R.id.uploadimageView)
         myImage = findViewById(R.id.uploadimageView)
@@ -61,8 +63,11 @@ class PostActivity : AppCompatActivity() {
         val data = Intent()
         //set the value/data to pass back
         data.setData(Uri.parse(titletextView.text.toString()))
+        val bitmap = (myImage.getDrawable() as BitmapDrawable).bitmap
+        val newimageuri = imageUtil.writeToTempImageAndGetPathUri(this, bitmap, "test" )
 
-        val mynewdata = DataItem(nametext.text.toString(), titletextView.text.toString(),textmultiline.text.toString(),false,0, R.drawable.imageupload)
+        //val mynewdata = DataItem(nametext.text.toString(), titletextView.text.toString(),textmultiline.text.toString(),false,0, R.drawable.imageupload)
+        val mynewdata = DataItem(nametext.text.toString(), titletextView.text.toString(), textmultiline.text.toString(), false, 0, newimageuri.toString())
         data.putExtra("NewDataItem", mynewdata as Serializable)
         //set a result code, It is either RESULT_OK or RESULT_CANCELLED
         setResult(RESULT_OK, data)
@@ -101,17 +106,27 @@ class PostActivity : AppCompatActivity() {
         if (resultCode == Activity.RESULT_OK && requestCode == IMAGE_REQUEST_CODE) {
             //Option1, use image uri
             myImage.setImageURI(data?.data)
-
+            if (data?.data != null) {
+                val tempuri = data?.data!!
+                if ("com.google.android.apps.photos.contentprovider".equals(tempuri.getAuthority()) ) {
+                    val pathUri: String = tempuri.getPath()!!
+                    val startindex = pathUri.indexOf("content")
+                    val lastindex = pathUri.lastIndex
+                    val newUri: String = pathUri.substring(startindex, lastindex)
+                    imageuri=newUri //data?.data!!
+                    Log.i("PostActivity",newUri)
+                }
+            }
             //Other options
             //val uri = Uri.parse("android.resource://" + packageName + "/" + R.drawable.sjsu1)
             //myImage.setImageURI(uri)
-            val uri = data?.data
-            //val inputStream = contentResolver.openInputStream(uri)
-            val inputStream = uri?.let { contentResolver.openInputStream(it) }
-            val b = BitmapFactory.decodeStream(inputStream)//Creates Bitmap objects
-            Log.i("PostActivity", "width: "+b.width+", height:"+b.height)//width: 960, height:1280
-            val yourDrawable: Drawable = BitmapDrawable(resources, imageUtil.Bitmapscale(b,0.5))
-            myImage.setImageDrawable(yourDrawable)
+//            val uri = data?.data
+//            //val inputStream = contentResolver.openInputStream(uri)
+//            val inputStream = uri?.let { contentResolver.openInputStream(it) }
+//            val b = BitmapFactory.decodeStream(inputStream)//Creates Bitmap objects
+//            Log.i("PostActivity", "width: "+b.width+", height:"+b.height)//width: 960, height:1280
+//            val yourDrawable: Drawable = BitmapDrawable(resources, imageUtil.Bitmapscale(b,0.5))
+//            myImage.setImageDrawable(yourDrawable)
 
 //            val yourDrawable  = ResourcesCompat.getDrawable(resources, R.drawable.sjsu1, null)
 //            myImage.setImageDrawable(yourDrawable)
