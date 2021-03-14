@@ -3,7 +3,9 @@ package sjsu.cmpelkk.myappandroid
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.drawable.BitmapDrawable
+import android.net.Uri
 import android.os.Bundle
+import android.widget.ImageView
 import android.widget.TextView
 import com.google.android.material.appbar.CollapsingToolbarLayout
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -21,10 +23,14 @@ class DetailScrollingActivity : AppCompatActivity() {
 
         val dataitem: DataItem? = intent.extras?.get("DataItem") as? DataItem
         val toolbarlayout: CollapsingToolbarLayout = findViewById<CollapsingToolbarLayout>(R.id.toolbar_layout)
+        val collapsingtoolbarheaderimage = findViewById<ImageView>(R.id.collapsingtoolbarheaderimage)
+        val collapsingtoolbarheadertext = findViewById<TextView>(R.id.collapsingtoolbarheadertext)
         if (dataitem != null) {
             toolbarlayout.title = dataitem.title
-            //Uri.parse(dataitem.imagename)
-            toolbarlayout.setBackgroundResource(R.drawable.sjsu1)
+            //toolbarlayout.setBackgroundResource(R.drawable.sjsu1)
+            collapsingtoolbarheaderimage.setImageURI(Uri.parse(dataitem.imagename))
+            collapsingtoolbarheadertext.text = "Author: "+dataitem.name
+
             //toolbarlayout.setBackgroundResource(dataitem.imagename)//Drawable object or 0 to remove the background.
 //            val inputStream = contentResolver.openInputStream(dataitem.imagename)
 //            val b = BitmapFactory.decodeStream(inputStream)//Creates Bitmap objects

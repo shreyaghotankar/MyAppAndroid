@@ -21,7 +21,31 @@
             android:fitsSystemWindows="true"
             app:contentScrim="?attr/colorPrimary"
             app:layout_scrollFlags="scroll|exitUntilCollapsed"
+            app:expandedTitleGravity="top"
             app:toolbarId="@+id/toolbar">
+
+            <ImageView
+                android:id="@+id/collapsingtoolbarheaderimage"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/sjsu1"
+                android:fitsSystemWindows="true"
+                android:scaleType="centerCrop"
+                app:layout_collapseMode="parallax" />
+
+            <TextView
+                android:id="@+id/collapsingtoolbarheadertext"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="20sp"
+                android:textColor="@android:color/white"
+                android:background="@color/transparentColor"
+                android:layout_marginTop="32dp"
+                android:layout_marginStart="40dp"
+                android:layout_marginEnd="32dp"
+                android:layout_marginBottom="32dp"
+                android:layout_gravity="bottom"
+                app:layout_collapseMode="parallax" />
 
             <androidx.appcompat.widget.Toolbar
                 android:id="@+id/toolbar"
