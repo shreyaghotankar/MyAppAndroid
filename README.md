@@ -13,3 +13,9 @@ Description: Create the project and add simple view with constraint layout
 
 ## Step3
 * Project archive link: [MyAppAndroid-step3 finishedsimplerecyclerview.zip](https://drive.google.com/file/d/1h8emVCYz4x_8ZIri67KhvQ4VJntJKYGv/view?usp=sharing)
+
+## Step4
+* Project archive link: [MyAppAndroid-step4 finished scrollingcollapsingview](https://drive.google.com/file/d/1h4bUdoTIREU4Hp7XHjKt9Og7kPPuqpP3/view?usp=sharing)
+
+## Step5
+* Project archive link: [MyAppAndroid-step5-2 add swipe to delete](https://drive.google.com/file/d/1hss9hJGH_XLwBO273MjjlKxOnMfayOSL/view?usp=sharing), [MyAppAndroid-step5-3 add parallax image](https://drive.google.com/file/d/1i-oJyh0NTPBkbhErM5QFlg8gGDhMjA6-/view?usp=sharing)
