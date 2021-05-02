@@ -2,6 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="sjsu.cmpelkk.myappandroid">
 
+    <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
@@ -14,17 +15,18 @@
         <activity
             android:name=".DetailScrollingActivity"
             android:label="@string/title_activity_detail_scrolling"
-            android:theme="@style/Theme.MyAppAndroid.NoActionBar"
-            android:parentActivityName=".MainActivity">
-            <!--The meta-data tag is required if you support API level 15 and lower -->
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/Theme.MyAppAndroid.NoActionBar">
+
+            <!-- The meta-data tag is required if you support API level 15 and lower -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity"/>
+                android:value=".MainActivity" />
         </activity>
         <activity android:name=".DisplayMessageActivity" />
-        <activity android:name=".PostActivity"
-            android:parentActivityName=".MainActivity">
-        </activity>
+        <activity
+            android:name=".PostActivity"
+            android:parentActivityName=".MainActivity"></activity>
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

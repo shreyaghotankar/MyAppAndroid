@@ -1,19 +1,19 @@
 package sjsu.cmpelkk.myappandroid
 
-import android.app.Activity
-import android.app.ActivityOptions
 import android.content.Context
 import android.content.Intent
-import android.content.res.AssetManager
-import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
+import android.text.InputType
+import android.util.Log
 import android.view.LayoutInflater
+import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.SearchView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -21,128 +21,190 @@ import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
+import sjsu.cmpelkk.myappandroid.adapter.MainCardAdapter
 import sjsu.cmpelkk.myappandroid.myutil.SwipeToDeleteCallback
+import sjsu.cmpelkk.myappandroid.network.NewsApi
+import sjsu.cmpelkk.myappandroid.network.NewsApiJSON
+
+
+import sjsu.cmpelkk.myappandroid.network.NewsApiService
 import java.io.Serializable
+import java.lang.Exception
 
 const val POST_REQUEST_CODE = 32
+const val BASE_URL = "https://newsapi.org"
+
 class MainActivity : AppCompatActivity() {
     var datalist: MutableList<DataItem> = mutableListOf()
     lateinit var recyclerCard: RecyclerView
+
+    private var titlesList =  mutableListOf<String>()
+    private var descList = mutableListOf<String>()
+    private var imagesList = mutableListOf<String>()
+    private var urlsList = mutableListOf<String>()
+    private var authorsList = mutableListOf<String>()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        recyclerCard = findViewById(R.id.cardrecyclerview)
-        datalist = carddefaultdata.toMutableList()
-        recyclerCard.adapter = MainCardAdapter(datalist) //(carddefaultdata)
-
-        val swipeHandler = object: SwipeToDeleteCallback(this){
-            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-                val adapter = recyclerCard.adapter as MainCardAdapter
-                adapter.removeAt(viewHolder.adapterPosition)
-
-            }
-        }
-        val itemTouchHelper = ItemTouchHelper(swipeHandler)
-        itemTouchHelper.attachToRecyclerView(recyclerCard)
-
-        val fab: View = findViewById(R.id.floatingActionButton)
-        fab.setOnClickListener { view ->
-            val intent = Intent(this, PostActivity::class.java)
-            //startActivity(intent)
-            startActivityForResult(intent, POST_REQUEST_CODE)
-        }
-
+        // network call
+        makeAPIRequest()
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (resultCode == Activity.RESULT_OK && requestCode == POST_REQUEST_CODE) {
-            Toast.makeText(this, data?.dataString, Toast.LENGTH_LONG).show()//title data
-            val dataitem: DataItem? = data?.extras?.get("NewDataItem") as? DataItem
-            if (dataitem != null) {
-                datalist.add(datalist.lastIndex+1, dataitem)
-                val myadapter = recyclerCard.adapter
-                if (myadapter != null) {
-                    //myadapter.notifyDataSetChanged()
-                    myadapter.notifyItemInserted(datalist.lastIndex+1)
+    override fun onCreateOptionsMenu(menu: Menu): Boolean{
+        menuInflater.inflate(R.menu.menu_search_item, menu)
+
+        val searchItem = menu.findItem(R.id.search)
+        val searchView = searchItem.actionView as SearchView
+
+        searchView.maxWidth = Int.MAX_VALUE
+        searchView.inputType = InputType.TYPE_CLASS_TEXT
+        searchView.queryHint = "Search News"
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                // TODO("Not yet implemented")
+                searchRequest(query)
+                return true
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                //TODO("Not yet implemented")
+
+                return false
+            }
+
+        })
+
+        searchView.setOnCloseListener(object: SearchView.OnCloseListener {
+            override fun onClose(): Boolean {
+               // TODO("Not yet implemented")
+                val intent = Intent(this@MainActivity, MainActivity::class.java)
+                startActivity(intent)
+
+                return true
+            }
+
+        })
+
+
+
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    // Retrofit with Gson
+    private fun searchRequest(query: String?) {
+
+        val q = query.toString()
+
+        titlesList.clear()
+        descList.clear()
+        imagesList.clear()
+        urlsList.clear()
+        authorsList.clear()
+
+        val api = Retrofit.Builder()
+            .baseUrl(BASE_URL)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+            .create(NewsApiService::class.java)
+
+        GlobalScope.launch(Dispatchers.IO){
+            try{
+                val response = api.searchNews(q)
+               // Log.d("search", "results: + $response")
+                for(article in response.articles) {
+                   // Log.d("MainActivity", "Results + $article")
+
+                    addToList(article.title,
+                        article.description.toString(),
+                        article.urlToImage.toString(),
+                        article.url,
+                        article.author.toString())
+                }
+                withContext(Dispatchers.Main){
+                    setupRecyclerView()
                 }
 
+
+            } catch (e: Exception){
+                Log.e("MainActivity", e.toString())
             }
+
         }
     }
-}
 
-class MainCardViewHolder(val cardView: CardView) : RecyclerView.ViewHolder(cardView) {
-    val title: TextView = cardView.findViewById(R.id.carditemtitletextView)
-    val story: TextView = cardView.findViewById(R.id.carditemdetailtext)
-    val image: ImageView = cardView.findViewById(R.id.cardimageView)
+    //Retrofit with Moshi
+    private fun makeAPIRequest() {
 
-    fun bind(oneitem: DataItem) {
-        title.text = oneitem.title
-        story.text = oneitem.story
-        //image.setImageResource(oneitem.imagename)//Use a resource id to set the content of the ImageView., R.drawable.imageupload)
-        //image.setImageURI(oneitem.imagename)
-        image.setImageURI(Uri.parse(oneitem.imagename))
-        val context = cardView.context
-        cardView.setOnClickListener {
-            var position: Int = adapterPosition
-            Snackbar.make(it, "Click detected on item $position",
-                    Snackbar.LENGTH_LONG).setAction("Action", null).show()
+        GlobalScope.launch(Dispatchers.IO) {
+            try {
 
-            val intent = Intent(context, DetailScrollingActivity::class.java).apply {
-                //putExtra("DataItem", oneitem.title)
-                putExtra("DataItem", oneitem as Serializable)
-                //get the object with: val object = intent.extras.get("DataItem") as DataItem
+                NewsApi.retrofitService.getNews().enqueue(
+                    object: Callback<NewsApiJSON> {
+                        override fun onFailure(call: Call<NewsApiJSON>, t: Throwable) {
+                            //TODO("Not yet implemented")
+                            //Log.d("MainActivity", "Failure: " + t.message)
+                        }
+
+                        override fun onResponse(
+                            call: Call<NewsApiJSON>,
+                            response: Response<NewsApiJSON>
+                        ) {
+                           val resp = response.body()
+                            //TODO("Not yet implemented")
+                            //Log.d("MainActivity", "response :  $resp")
+                            if (resp != null) {
+                                for(article in resp.articles){
+                                    //Log.d("MainActivity", "check article: " + article.description.toString())
+                                    addToList(article.title,
+                                        article.description.toString(),
+                                        article.urlToImage.toString(),
+                                        article.url, article.author.toString())
+                                }
+                                setupRecyclerView()
+
+                            }
+                        }
+
+                    }
+
+                )
+
+
+            } catch (e: Exception) {
+                Log.e("MainActivity", e.toString())
             }
-            context.startActivity(intent)
+
         }
-        if (oneitem.highlight) {
-            cardView.setCardBackgroundColor(Color.parseColor("#E6E6E6"));
-            cardView.maxCardElevation = 10.0F;
-            //cardView.radius = 5.0F;
-        }
-        //header.setTextColor(Color.parseColor("#ffffff"))
-        title.setTextColor(context.getColor(R.color.primaryDarkColor))
-        //description.setTextColor(Color.parseColor("#ffa270"))
-        story.setTextColor(context.getColor(R.color.secondaryDarkColor))
+
     }
 
-}
+    private fun addToList(title: String, description: String, image: String, url: String, author:String) {
+        titlesList.add(title)
+        descList.add(description)
+        imagesList.add(image)
+        urlsList.add(url)
+        authorsList.add(author)
 
-class MainCardAdapter(var data: MutableList<DataItem>) : RecyclerView.Adapter<MainCardViewHolder>()
-{
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MainCardViewHolder {
-        //TODO("Not yet implemented")
-        //create an instance of LayoutInflater
-        //The layout inflater knows how to create views from XML layouts. The context contains information on how to correctly inflate the view.
-        // In an adapter for a recycler view, you always pass in the context of the parent view group, which is the RecyclerView.
-        val layoutInflater = LayoutInflater.from(parent.context)
-
-        //create the view by asking the layoutinflater to inflate it.
-        //Pass in the XML layout for the view, and the parent view group for the view. The third, boolean, argument is attachToRoot.
-        // This argument needs to be false, because RecyclerView adds this item to the view hierarchy for you when it's time.
-        val view = layoutInflater
-            .inflate(R.layout.card_item_view, parent, false) as CardView
-
-
-        //val view = LayoutInflater.from(parent.context).inflate(R.layout.card_item_view, parent, false)
-        return MainCardViewHolder(view)
     }
 
-    override fun getItemCount(): Int {
-        //TODO("Not yet implemented")
-        return data.size
+    private fun setupRecyclerView() {
+        val adapter = MainCardAdapter(titlesList, descList, imagesList, urlsList, authorsList)
+        val recyclerView: RecyclerView = findViewById(R.id.cardrecyclerview)
+        recyclerView.adapter = adapter
+
+
     }
 
-    override fun onBindViewHolder(holder: MainCardViewHolder, position: Int) {
-        //TODO("Not yet implemented")
-        holder.bind(data[position])
-    }
-
-    fun removeAt(position: Int) {
-        data.removeAt(position)
-        notifyItemRemoved(position)
-    }
 
 }
