@@ -3,7 +3,7 @@ SJSU CMPE277 Android sample code, Spring 2021
 
 # Homework 2 - News App using Retrofit with Moshi/Gson
 
-### [Demo Link]()
+### [Demo Link](https://drive.google.com/file/d/1i_QLig9-WYzysPKdn44uSQNDhAqj1gDz/view?usp=sharing)
 
 ### Features:
 * Using newsapi for getting the news
